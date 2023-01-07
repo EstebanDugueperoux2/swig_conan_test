@@ -1,3 +1,5 @@
+[![create_conan_package](https://github.com/EstebanDugueperoux2/swig_conan_test/actions/workflows/main.yml/badge.svg)](https://github.com/EstebanDugueperoux2/swig_conan_test/actions/workflows/main.yml)
+
 # swig_conan_test
 
 ```

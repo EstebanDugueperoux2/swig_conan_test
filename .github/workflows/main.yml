@@ -1,17 +1,47 @@
 name: create_conan_package
 on:
-  workflow_dispatch:
+  push
+  # workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: conanio/gcc12-ubuntu18.04
+    container: 
+      # image: conanio/gcc12-ubuntu18.04
+      image: conanio/gcc12-ubuntu16.04
+      options: --user root
+      # python
 
-    steps:
+    steps:    
     - uses: actions/checkout@v3
-    
-    - name: Version
-      run: conan --version
+    - uses: actions/cache@v3
+      with:
+        path: |
+          /home/conan/.cache/
+          /home/conan/.conan
+        key: cache
+    - name: Python version
+      run: python --version
 
     - name: Create Conan Package
-      run: conan create . --profile:build .conan/profiles/gcc12 --profile:host .conan/profiles/gcc12 --build missing -c tools.system.package_manager:mode=install -c tools.system.package_manager:sudo=True
+      run: |
+        conan install . --profile:build .conan/profiles/gcc12 --profile:host .conan/profiles/gcc12 --build missing -c tools.system.package_manager:mode=install -c tools.system.package_manager:sudo=True
+        conan build .
+        conan package .
+
+    - name: Install Python Packaging Requirements
+      # run: pip install setuptools wheel twine
+      run: |
+        python3 -m pip install --upgrade build
+        cp package/python/* src/swig_conan_test/
+
+    - name: Build and publish
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: pypi-AgENdGVzdC5weXBpLm9yZwIkZWI0OTFiNmMtMWYyMS00MDA1LTg1ZTUtODdkMDVhZDM2MmM1AAIqWzMsImFkNTc1MzY0LWQ2Y2ItNDFjNS1iZGZkLTY5OGQwMGY4YmE4ZiJdAAAGIP2-XCMufk3DsaJgU6iHlX9u0H3Ry8gjG3gHKXFZ9UQh
+      run: |
+        python -m build
+        #  python setup.py sdist bdist_wheel
+        python3 -m pip install --upgrade twine
+        python3 -m twine upload --repository testpypi dist/*
+        # twine upload dist/*

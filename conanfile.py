@@ -1,6 +1,6 @@
 from conan import ConanFile
-from conan.tools.cmake import CMakeToolchain, CMakeDeps, CMake, cmake_layout
-
+from conan.tools.cmake import CMakeToolchain, CMakeDeps, CMake
+from conan.tools.system.package_manager import Apt, Yum, Dnf
 
 class SwigConanTestConan(ConanFile):
     name = "swig_conan_test"
@@ -15,8 +15,18 @@ class SwigConanTestConan(ConanFile):
 
     # Binary configuration
     settings = "os", "compiler", "build_type", "arch"
-    options = {"shared": [True, False], "fPIC": [True, False]}
-    default_options = {"shared": False, "fPIC": True}
+
+    options = {
+        "shared": [True, False], 
+        "fPIC": [True, False],
+        "test": [True, False]
+    }
+
+    default_options = {
+        "shared": False, 
+        "fPIC": True,
+        "test": False
+    }
 
     # Sources are located in the same place as this recipe, copy them to the recipe
     exports_sources = "CMakeLists.txt", "src/*", "include/*"
@@ -28,6 +38,11 @@ class SwigConanTestConan(ConanFile):
     # def requirements(self):
     #     self.requires("swig/4.1.0")
 
+    def system_requirements(self):
+        # Python.h required by swig for python wrapper generation and build
+        Apt(self).install(["libpython-dev"], update=True)
+        Yum(self).install(["python-devel"])
+        Dnf(self).install(["python-devel"])
 
     def build_requirements(self):
         self.tool_requires("cmake/[~3.25.0]")
@@ -35,9 +50,8 @@ class SwigConanTestConan(ConanFile):
         self.tool_requires("ccache/[~4.6]")
         # self.tool_requires("swig/4.1.0")
         self.tool_requires("swig/4.0.2")
-
-    def layout(self):
-        cmake_layout(self)
+        if self.options.test:
+            self.tool_requires("gtest/1.12.1")
 
     def generate(self):
         tc = CMakeToolchain(self, generator="Ninja")
@@ -50,15 +64,22 @@ class SwigConanTestConan(ConanFile):
         cmake = CMake(self)
         cmake.configure()
         cmake.build(cli_args=["-v"])
+        # TODO: add some tests
+        if self.options.test:
+            cmake.test()
 
     def package(self):
         cmake = CMake(self)
         cmake.install()
-        cmake.test()
         # Add cpack to generate deb and rpm packages
         # TODO: study https://docs.conan.io/en/latest/reference/generators/deploy.html
         # TODO: study cpack
+        
         # self.run("cpack")
 
     def package_info(self):
         self.cpp_info.libs = ["mylib"]
+
+    def package_id(self):
+        del self.info.options.test
+
