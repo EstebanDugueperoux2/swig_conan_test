@@ -4,6 +4,7 @@ on:
 
 jobs:
   build:
+    runs-on: ubuntu-latest
     container: conanio/gcc12-ubuntu18.04
 
     steps:
