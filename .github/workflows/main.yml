@@ -1,0 +1,16 @@
+name: create_conan_package
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    container: conanio/gcc12-ubuntu18.04
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Version
+      run: conan --version
+
+    - name: Create Conan Package
+      run: conan create . --profile:build .conan/profiles/gcc12 --profile:host .conan/profiles/gcc12 --build missing -c tools.system.package_manager:mode=install -c tools.system.package_manager:sudo=True
