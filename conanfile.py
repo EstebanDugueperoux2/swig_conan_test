@@ -54,6 +54,11 @@ class SwigConanTestConan(ConanFile):
     def package(self):
         cmake = CMake(self)
         cmake.install()
+        cmake.test()
+        # Add cpack to generate deb and rpm packages
+        # TODO: study https://docs.conan.io/en/latest/reference/generators/deploy.html
+        # TODO: study cpack
+        # self.run("cpack")
 
     def package_info(self):
         self.cpp_info.libs = ["mylib"]
