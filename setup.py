@@ -64,16 +64,16 @@ class build_ext(build_ext_orig):
 
 
         self.spawn(["pwd"])
-        self.spawn(["ls", "-l", str(cwd)])
-        self.spawn(["ls","-l", str(build_temp)])
+        self.spawn(["ls", "-la", str(cwd)])
+        self.spawn(["ls","-la", str(build_temp)])
         self.spawn(["conan", "install", str(cwd),
                     # "--install-folder={}".format(build_temp / 'build'),
                     "--build", "missing",
                     "--profile:build", ".conan/profiles/gcc12",
                     "--profile:host", ".conan/profiles/gcc12",
                     ])
-        self.spawn(["ls", "-l"])
-        self.spawn(["ls", "-l", "build"])
+        self.spawn(["ls", "-la"])
+        self.spawn(["ls", "-la", "build"])
         self.spawn(["conan", "build", str(cwd), 
                 # '--source-folder={}'.format(cwd),
                 # '--build-folder={}'.format(build_temp / 'build'),
