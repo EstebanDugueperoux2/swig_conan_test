@@ -1,1 +1,0 @@
-# swig_conan_test package

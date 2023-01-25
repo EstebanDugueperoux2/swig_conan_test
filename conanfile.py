@@ -1,6 +1,7 @@
 from conan import ConanFile
-from conan.tools.cmake import CMakeToolchain, CMakeDeps, CMake
+from conan.tools.cmake import CMakeToolchain, CMakeDeps, CMake, cmake_layout
 from conan.tools.system.package_manager import Apt, Yum, Dnf
+import os
 
 class SwigConanTestConan(ConanFile):
     name = "swig_conan_test"
@@ -23,8 +24,8 @@ class SwigConanTestConan(ConanFile):
     }
 
     default_options = {
-        "shared": False, 
-        "fPIC": True,
+        "shared": True, 
+        "fPIC": False,
         "test": False
     }
 
@@ -41,8 +42,8 @@ class SwigConanTestConan(ConanFile):
     def system_requirements(self):
         # Python.h required by swig for python wrapper generation and build
         Apt(self).install(["libpython-dev"], update=True)
-        Yum(self).install(["python-devel"])
-        Dnf(self).install(["python-devel"])
+        Yum(self).install(["python3-devel"])
+        Dnf(self).install(["python3-devel"])
 
     def build_requirements(self):
         self.tool_requires("cmake/[~3.25.0]")
@@ -52,6 +53,9 @@ class SwigConanTestConan(ConanFile):
         self.tool_requires("swig/4.0.2")
         if self.options.test:
             self.tool_requires("gtest/1.12.1")
+
+    def layout(self):
+        cmake_layout(self)
 
     def generate(self):
         tc = CMakeToolchain(self, generator="Ninja")
@@ -76,6 +80,10 @@ class SwigConanTestConan(ConanFile):
         # TODO: study cpack
         
         # self.run("cpack")
+
+    def imports(self):
+        self.copy("swig_conan_test.py", dst="src/swig_conan_test/", src="python/")
+        # self.copy("*.dylib*", dst=dest, src="lib")
 
     def package_info(self):
         self.cpp_info.libs = ["mylib"]

@@ -1,0 +1,2 @@
+include conanfile.py
+include README.md

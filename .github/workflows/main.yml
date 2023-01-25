@@ -27,22 +27,19 @@ jobs:
       run: |
         conan install . --profile:build .conan/profiles/gcc12 --profile:host .conan/profiles/gcc12 --build missing -c tools.system.package_manager:mode=install -c tools.system.package_manager:sudo=True
         conan build .
-        conan package .
+        conan export-pkg .
 
     - name: Install Python Packaging Requirements
       # run: pip install setuptools wheel twine
       run: |
         python3 -m pip install --upgrade build
-        cp package/python/* python/swig_conan_test/
 
     - name: Build and publish
       env:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: pypi-AgENdGVzdC5weXBpLm9yZwIkZWI0OTFiNmMtMWYyMS00MDA1LTg1ZTUtODdkMDVhZDM2MmM1AAIqWzMsImFkNTc1MzY0LWQ2Y2ItNDFjNS1iZGZkLTY5OGQwMGY4YmE4ZiJdAAAGIP2-XCMufk3DsaJgU6iHlX9u0H3Ry8gjG3gHKXFZ9UQh
       run: |
-        cd python/
         python -m build
-        #  python setup.py sdist bdist_wheel
         python3 -m pip install --upgrade twine
         python3 -m twine upload --repository testpypi dist/*
         # twine upload dist/*

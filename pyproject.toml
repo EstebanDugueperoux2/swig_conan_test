@@ -1,10 +1,11 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel", "twine", "conan"]
+requires = ["setuptools>=61.0", "setuptools_scm[toml]>=6.2", "conan>=1.57.0", "wheel", "twine"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "swig_conan_test"
-version = "0.0.3"
+version = "0.0.1"
+#dynamic = ["version"]
 authors = [
   { name="Esteban DUGUEPEROUX", email="esteban.dugueperoux@gmail.com" },
 ]
@@ -19,4 +20,12 @@ classifiers = [
 
 [project.urls]
 "Homepage" = "https://github.com/EstebanDugueperoux2/swig_conan_test/"
-"Bug Tracker" = "https://github.com/EstebanDugueperoux2/swig_conan_test//issues"
+"Bug Tracker" = "https://github.com/EstebanDugueperoux2/swig_conan_test/issues"
+
+# [tool.setuptools.packages.find]
+# where = ["."]
+
+#[tool.setuptools.package-data]
+#mypkg = ["*.txt", "*.rst"]
+
+#[tool.setuptools_scm]
