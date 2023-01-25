@@ -1,7 +1,7 @@
 from conan import ConanFile
 from conan.tools.cmake import CMakeToolchain, CMakeDeps, CMake, cmake_layout
 from conan.tools.system.package_manager import Apt, Yum, Dnf
-import os
+from conan.tools.env import VirtualBuildEnv
 
 class SwigConanTestConan(ConanFile):
     name = "swig_conan_test"
@@ -39,18 +39,18 @@ class SwigConanTestConan(ConanFile):
     # def requirements(self):
     #     self.requires("swig/4.1.0")
 
-    def system_requirements(self):
-        # Python.h required by swig for python wrapper generation and build
-        Apt(self).install(["libpython-dev"], update=True)
-        Yum(self).install(["python3-devel"])
-        Dnf(self).install(["python3-devel"])
+    # def system_requirements(self):
+    #     # Python.h required by swig for python wrapper generation and build
+    #     Apt(self).install(["libpython-dev"], update=True)
+    #     Yum(self).install(["python3-devel"])
+    #     Dnf(self).install(["python3-devel"])
 
     def build_requirements(self):
-        self.tool_requires("cmake/[~3.25.0]")
-        self.tool_requires("ninja/[~1.11.0]")
-        self.tool_requires("ccache/[~4.6]")
+        # self.tool_requires("cmake/[~3.25.0]")
+        # self.tool_requires("ninja/[~1.11.0]")
+        # self.tool_requires("ccache/[~4.6]")
         # self.tool_requires("swig/4.1.0")
-        self.tool_requires("swig/4.0.2")
+        self.tool_requires("swig/4.4.0")
         if self.options.test:
             self.tool_requires("gtest/1.12.1")
 
@@ -58,11 +58,14 @@ class SwigConanTestConan(ConanFile):
         cmake_layout(self)
 
     def generate(self):
-        tc = CMakeToolchain(self, generator="Ninja")
+        tc = CMakeToolchain(self)
         tc.generate()
 
         cmake = CMakeDeps(self)
         cmake.generate()
+        
+        # ms = VirtualBuildEnv(self)
+        # ms.generate()
 
     def build(self):
         cmake = CMake(self)

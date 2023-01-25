@@ -1,17 +1,21 @@
 set(target swig_conan_test)
 
-find_package(Python3 COMPONENTS Development REQUIRED)
-find_package(SWIG REQUIRED)
-INCLUDE(${SWIG_USE_FILE})
+find_package(SWIG REQUIRED CONFIG)
+include(UseSWIG)
 
-FIND_PACKAGE(PythonLibs)
-INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
+find_package(Python3 COMPONENTS Development REQUIRED)
+# find_package(SWIG REQUIRED)
+# INCLUDE(${SWIG_USE_FILE})
+
+# FIND_PACKAGE(PythonLibs)
+# INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
 # set(SWIG_SOURCES ../mylib/swig_conan_test.cpp swig_conan_test.i)
 
 set(SWIG_SOURCES swig_conan_test.i)
+set(CMAKE_SWIG_FLAGS -DTest)
 
 set_property(SOURCE ${target}.i PROPERTY CPLUSPLUS ON)
 set_property(SOURCE ${target}.i PROPERTY SWIG_MODULE_NAME swig_conan_test)
